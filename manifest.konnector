@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
-  "name": "Connector template",
+  "name": "Netflix Connector",
   "type": "konnector",
   "language": "node",
   "icon": "icon.png",
-  "slug": "template",
-  "source": "git://github.com/konnectors/cozy-konnector-template.git",
+  "slug": "netflix",
+  "source": "git://github.com/konnectors/netflix.git",
   "editor": "Cozy",
   "vendor_link": "Link to the target website",
   "categories": ["other"],
@@ -20,10 +20,13 @@
   "data_types": [
     "bill"
   ],
-  "screenshots": [ "screenshots/screenshot1.png" ],
+  "screenshots": [ ],
   "permissions": {
-    "books": {
-      "type": "io.cozy.books"
+    "views": {
+      "type": "io.cozy.netflix.views"
+    },
+    "evaluations": {
+      "type": "io.cozy.netflix.opinions"
     },
     "files": {
       "type": "io.cozy.files"
@@ -40,11 +43,14 @@
   "langs": ["fr", "en"],
   "locales": {
     "fr": {
-      "short_description": "Template de connecteur",
-      "long_description": "Ce template récupère une liste de livres sur un site de scraping",
+      "short_description": "Connecteur Netflix",
+      "long_description": "Ce connecteur récupère vos factures et historique d'activité Netflix",
       "permissions": {
-        "books": {
-          "description": "Utilisé pour sauvegarder les références des livres"
+        "views": {
+          "description": "Utilisé pour sauvegarder ce que vous avez regardé"
+        },
+        "evaluations": {
+          "description": "Utilisé pour sauvegarder les notes que vous avez laissé"
         },
         "files": {
           "description": "Utilisé pour sauvegarder les factures"
@@ -55,11 +61,14 @@
       }
     },
     "en": {
-      "short_description": "Connector template",
-      "long_description": "This template fetches a list of books from a scraping website",
+      "short_description": "Netflix Connector",
+      "long_description": "This connector fetches your netflix invoices and views",
       "permissions": {
-        "books": {
-          "description": "Required to save books references"
+        "views": {
+          "description": "Used to save what you watched."
+        },
+        "evaluations": {
+          "description": "Used to save the evaluations you made"
         },
         "files": {
           "description": "Required to save the bills"
