@@ -7,9 +7,19 @@
   "slug": "netflix",
   "source": "git://github.com/konnectors/netflix.git",
   "editor": "Cozy",
-  "vendor_link": "Link to the target website",
+  "vendor_link": "https://www.netflix.com/login",
   "categories": ["other"],
   "fields": {
+    "login": {
+      "type": "email"
+    },
+    "password": {
+      "type": "password"
+    },
+    "profileName": {
+      "type": "text",
+      "isRequired": false
+    },
     "advancedFields": {
       "folderPath": {
         "advanced": true,
