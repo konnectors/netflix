@@ -23,7 +23,7 @@ process.env.SENTRY_DSN =
 module.exports = new BaseKonnector(start)
 
 async function start(fields) {
-  const { email, password } = fields
+  const { login: email, password } = fields
   // follow some redirects to get correct cookie & login urls
   const loginURL = await getLoginURLAndCookies()
 
