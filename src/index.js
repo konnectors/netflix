@@ -8,6 +8,7 @@ const {
 } = require('cozy-konnector-libs')
 const log = require('cozy-logger')
 const pdf = require('pdfjs')
+const { URL } = require('url')
 const html2pdf = require('./html2pdf')
 const moment = require('moment')
 
@@ -107,8 +108,9 @@ async function fetchBills(fields) {
     bill.currency = currency
     bill.filename = bill.date.format('YYYY-MM-DD') + '_' + amount + '.pdf'
     bill.date = bill.date.toDate()
-    bill.filestream = await billURLToStream(bill.fileurl)
+    const url = new URL(bill.fileurl, baseUrl)
     delete bill.fileurl
+    bill.filestream = await billURLToStream(url.toString())
   }
   await saveBills(bills, fields, {
     identifiers: ['netflix']
