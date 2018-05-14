@@ -33,6 +33,8 @@ async function start(fields) {
     formSelector: 'form.login-form',
     formData: { email, password },
     validate: (status, $) => {
+      log.info('validating, status=' + status)
+      log.info('validating, items=' + $('.list-profiles').length)
       return status == 200 && $('.list-profiles').length == 1
     },
     headers: {
