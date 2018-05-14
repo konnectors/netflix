@@ -1,0 +1,92 @@
+{
+  "version": "1.0.0",
+  "name": "Netflix Connector",
+  "type": "konnector",
+  "language": "node",
+  "icon": "icon.png",
+  "slug": "netflix",
+  "source": "git://github.com/konnectors/netflix.git",
+  "editor": "Cozy",
+  "vendor_link": "https://www.netflix.com/login",
+  "categories": ["other"],
+  "fields": {
+    "login": {
+      "type": "email"
+    },
+    "password": {
+      "type": "password"
+    },
+    "profileName": {
+      "type": "text",
+      "isRequired": false
+    },
+    "advancedFields": {
+      "folderPath": {
+        "advanced": true,
+        "isRequired": false
+      }
+    }
+  },
+  "data_types": [
+    "bill"
+  ],
+  "screenshots": [ ],
+  "permissions": {
+    "views": {
+      "type": "io.cozy.netflix.views"
+    },
+    "evaluations": {
+      "type": "io.cozy.netflix.opinions"
+    },
+    "files": {
+      "type": "io.cozy.files"
+    },
+    "accounts": {
+      "type": "io.cozy.accounts",
+      "verbs": ["GET"]
+    }
+  },
+  "developer": {
+    "name": "Cozy",
+    "url": "https://cozy.io"
+  },
+  "langs": ["fr", "en"],
+  "locales": {
+    "fr": {
+      "short_description": "Connecteur Netflix",
+      "long_description": "Ce connecteur récupère vos factures et historique d'activité Netflix",
+      "permissions": {
+        "views": {
+          "description": "Utilisé pour sauvegarder ce que vous avez regardé"
+        },
+        "evaluations": {
+          "description": "Utilisé pour sauvegarder les notes que vous avez laissé"
+        },
+        "files": {
+          "description": "Utilisé pour sauvegarder les factures"
+        },
+        "accounts": {
+          "description": "Utilisé pour obtenir les données du compte"
+        }
+      }
+    },
+    "en": {
+      "short_description": "Netflix Connector",
+      "long_description": "This connector fetches your netflix invoices and views",
+      "permissions": {
+        "views": {
+          "description": "Used to save what you watched."
+        },
+        "evaluations": {
+          "description": "Used to save the evaluations you made"
+        },
+        "files": {
+          "description": "Required to save the bills"
+        },
+        "accounts": {
+          "description": "Required to get the account's data"
+        }
+      }
+    }
+  }
+}
