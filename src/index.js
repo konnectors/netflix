@@ -115,7 +115,8 @@ async function fetchBills(fields) {
     bill.filestream = await billURLToStream(url.toString())
   }
   await saveBills(bills, fields, {
-    identifiers: ['netflix']
+    identifiers: ['netflix'],
+    contentType: 'application/pdf'
   })
 }
 
