@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "name": "Netflix Connector",
+  "name": "Netflix",
   "type": "konnector",
   "language": "node",
   "icon": "icon.svg",
@@ -55,7 +55,7 @@
     }
   },
   "developer": {
-    "name": "Cozy",
+    "name": "Cozy Cloud",
     "url": "https://cozy.io"
   },
   "langs": ["fr", "en"],
