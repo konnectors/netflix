@@ -1,16 +1,16 @@
 language: node_js
 node_js:
 - '8'
-cache:
-  yarn: true
-  directories:
-  - node_modules
 env:
   global:
   - GH_USER_EMAIL="travis@example.org"
   - GH_USER_NAME="cozy-bot"
   - DEPLOY_REPOSITORY="git@github.com:konnectors/netflix.git"
   - secure: hIumPwAVE8WkCv2y2wJ40/6fc2nwjaQNsWaVeaY51wZ2s6lD0C4i7md++UYE3OpkolgpUN8F8crMgqrqOyd7skk+M6y79gzKOyx09URi0JT2kEgmFQen5gdlq16lXAo7WaJoCQTxFCBzJ8ji6yurqEG2jRf/CSrkDgvxvzhVhcf0Hq8XGjTWx5AtS2uPnNvCrK8FvYRplaAYJDCoQJEx983VvA2UIuodOq7DQLYoXPVz/F3wG39PAX0MGVb1+ao+pF1UDbsf4qoEN2IuTM7gGAaU/9Zy1Dz3tEjMsIwIPdqXakcpeN2BwI0nlGsSJEXAqvSWW7P4IKI3GO/FD08/jWDpBb2BA3/8ul7I9b2p1sJP/n2Fs6idBexJaWynKvSyLjz6NK19F0h12yMOFFp/5BDi8M8xlwyUkne32u/uj/EyRATFILQKv1YdrLEwg5ZOY8jM4xCPeJVQS6I5CGHx7rvM8VYyyJzxI9Oo+KKizsbE7FCI1c6Koy3pQmv9vyBlr1mYzQlHrQAkJNAOxZljcI+TAhlSJMUnPAIiVEgj8Yv+/1dp0sxxOwtqaqMLqi3tpalkCRjLLEqWhVNLZ9Dunu940xCF5zFoSJImIMT56WtuPiM1lREYgnwamgfXj8AX5eUAbm6jlkp6/BQotmUVT+Qqq+zKrmbmpcTGmnByfwU=
+cache:
+  yarn: true
+  directories:
+  - node_modules
 script:
 - yarn lint
 - yarn build
@@ -36,3 +36,6 @@ before_install:
 - eval "$(ssh-agent -s)"
 - chmod 600 /tmp/github_deploy_key
 - ssh-add /tmp/github_deploy_key
+after_deploy:
+- rm /tmp/github_deploy_key
+- ssh-add -D
