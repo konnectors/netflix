@@ -30,7 +30,7 @@
   "data_types": [
       "bill",
       "activity",
-      "video_stream"
+      "videostream"
   ],
   "screenshots": [ ],
   "permissions": {
