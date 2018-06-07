@@ -8,7 +8,7 @@
   "source": "git://github.com/konnectors/netflix.git",
   "editor": "Cozy",
   "vendor_link": "https://www.netflix.com/login",
-  "categories": ["other"],
+  "categories": ["online_services"],
   "fields": {
     "login": {
       "type": "email"
