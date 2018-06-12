@@ -1,6 +1,6 @@
 {
-  "version": "1.0.0",
-  "name": "Netflix Connector",
+  "version": "1.0.2",
+  "name": "Netflix",
   "type": "konnector",
   "language": "node",
   "icon": "icon.svg",
@@ -8,7 +8,7 @@
   "source": "git://github.com/konnectors/netflix.git",
   "editor": "Cozy",
   "vendor_link": "https://www.netflix.com/login",
-  "categories": ["other"],
+  "categories": ["online_services"],
   "fields": {
     "login": {
       "type": "email"
@@ -30,7 +30,7 @@
   "data_types": [
       "bill",
       "activity",
-      "video_stream"
+      "videostream"
   ],
   "screenshots": [ ],
   "permissions": {
@@ -55,7 +55,7 @@
     }
   },
   "developer": {
-    "name": "Cozy",
+    "name": "Cozy Cloud",
     "url": "https://cozy.io"
   },
   "langs": ["fr", "en"],
