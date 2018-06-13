@@ -87,7 +87,7 @@ async function selectProfile($, fields) {
 async function fetchBills(fields) {
   const request = requestFactory({ debug: DEBUG, cheerio: true, jar: true })
   const $bills = await request(baseUrl + '/BillingActivity')
-  moment.locale($bills('accountLayout').attr('lang') || 'fr')
+  moment.locale($bills('.accountLayout').attr('lang') || 'fr')
   const bills = scrape(
     $bills,
     {
