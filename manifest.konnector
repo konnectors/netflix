@@ -109,5 +109,6 @@
       }
     }
   },
-  "banksTransactionRegExp": "\\bnetflix\\b"
+  "banksTransactionRegExp": "\\bnetflix\\b",
+  "manifest_version": "2"
 }
