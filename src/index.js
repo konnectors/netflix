@@ -1,3 +1,7 @@
+process.env.SENTRY_DSN =
+  process.env.SENTRY_DSN ||
+  'https://397c3282a3bd46b39eaf5e91770fe362:6f81483e6c1e4760a3a69a937fecf147@sentry.cozycloud.cc/44'
+
 const {
   BaseKonnector,
   requestFactory,
@@ -15,10 +19,6 @@ const moment = require('moment')
 const baseUrl = 'https://www.netflix.com'
 const NBSPACE = '\xa0'
 const DEBUG = false
-
-process.env.SENTRY_DSN =
-  process.env.SENTRY_DSN ||
-  'https://397c3282a3bd46b39eaf5e91770fe362:6f81483e6c1e4760a3a69a937fecf147@sentry.cozycloud.cc/44'
 
 module.exports = new BaseKonnector(start)
 
