@@ -1,5 +1,5 @@
 {
-  "version": "1.0.2",
+  "version": "1.0.3",
   "name": "Netflix",
   "type": "konnector",
   "language": "node",
@@ -9,6 +9,7 @@
   "editor": "Cozy",
   "vendor_link": "https://www.netflix.com/login",
   "categories": ["online_services"],
+  "frequency": "monthly",
   "fields": {
     "login": {
       "type": "email"
