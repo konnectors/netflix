@@ -1,0 +1,42 @@
+{
+  "io.cozy.netflix.views": [
+    {
+      "title": "Les Gardiens de la Galaxie",
+      "videoTitle": "Les Gardiens de la Galaxie",
+      "movieID": 70301645,
+      "country": "FR",
+      "bookmark": 3142,
+      "duration": 7293,
+      "date": 1530824906489,
+      "deviceType": 1404,
+      "dateStr": "05/07/2018",
+      "index": 0,
+      "topNodeId": "70301645",
+      "estRating": "48",
+      "_id": "f877296dcb9c5713a96277836f5ab26c"
+    }
+  ],
+  "io.cozy.netflix.opinions": [
+    {
+      "ratingType": "thumb",
+      "title": "Naruto",
+      "movieID": 70205012,
+      "yourRating": 1,
+      "date": "05/08/2017",
+      "timestamp": 1501908436285,
+      "comparableDate": 1501908436,
+      "_id": "8e898ecd209b57cda1c1878c61bc512f"
+    }
+  ],
+  "io.cozy.bills": [
+    {
+      "date": "2018-06-16T22:00:00.000Z",
+      "amount": 7.99,
+      "vendor": "Netflix",
+      "currency": "EUR",
+      "filename": "2018-06-17_7,99.pdf",
+      "invoice": "io.cozy.files:2018-06-17_7,99.pdf",
+      "_id": "14d458f18b325ddeaaac3e428532c1d9"
+    }
+  ]
+}
