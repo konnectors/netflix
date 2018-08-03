@@ -23,25 +23,7 @@ const DEBUG = false
 module.exports = new BaseKonnector(start)
 
 async function start(fields) {
-  const { login: email, password } = fields
-  // follow some redirects to get correct cookie & login urls
-  const loginURL = await getLoginURLAndCookies()
-
-  const $ = await signin({
-    url: loginURL,
-    debug: DEBUG,
-    formSelector: 'form.login-form',
-    formData: { email, password },
-    validate: (status, $) => {
-      log.info('validating, status=' + status)
-      log.info('validating, items=' + $('.list-profiles').length)
-      return status == 200 && $('.list-profiles').length == 1
-    },
-    headers: {
-      'Accept-Language': 'en-US'
-    },
-    followRedirect: true
-  })
+  const $ = await authenticate(fields)
 
   await selectProfile($, fields)
 
@@ -53,6 +35,28 @@ async function start(fields) {
     fetchViews(fields, buildNumber),
     fetchOpinions(fields, buildNumber)
   ])
+}
+
+async function authenticate(fields) {
+  log.info('authenticating...')
+  // follow some redirects to get correct cookie & login urls
+  const loginURL = await getLoginURLAndCookies()
+
+  return signin({
+    url: loginURL,
+    debug: DEBUG,
+    formSelector: 'form.login-form',
+    formData: { userLoginId: fields.login, password: fields.password },
+    validate: (status, $) => {
+      log.info('validating, status=' + status)
+      log.info('validating, items=' + $('.list-profiles').length)
+      return status == 200 && $('.list-profiles').length == 1
+    },
+    headers: {
+      'Accept-Language': 'en-US'
+    },
+    followRedirect: true
+  })
 }
 
 async function getLoginURLAndCookies() {
