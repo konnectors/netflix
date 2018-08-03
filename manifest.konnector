@@ -1,0 +1,115 @@
+{
+  "version": "1.0.5",
+  "name": "Netflix",
+  "type": "konnector",
+  "language": "node",
+  "icon": "icon.svg",
+  "slug": "netflix",
+  "source": "git://github.com/konnectors/netflix.git",
+  "editor": "Cozy",
+  "vendor_link": "https://www.netflix.com/login",
+  "categories": ["online_services"],
+  "frequency": "monthly",
+  "fields": {
+    "login": {
+      "type": "email"
+    },
+    "password": {
+      "type": "password"
+    },
+    "profileName": {
+      "type": "text",
+      "isRequired": false
+    },
+    "advancedFields": {
+      "folderPath": {
+        "advanced": true,
+        "isRequired": false
+      }
+    }
+  },
+  "data_types": [
+      "bill",
+      "activity",
+      "videostream"
+  ],
+  "screenshots": [ ],
+  "permissions": {
+    "bank operations": {
+      "type": "io.cozy.bank.operations"
+    },
+    "bills": {
+      "type": "io.cozy.bills"
+    },
+    "views": {
+      "type": "io.cozy.netflix.views"
+    },
+    "evaluations": {
+      "type": "io.cozy.netflix.opinions"
+    },
+    "files": {
+      "type": "io.cozy.files"
+    },
+    "accounts": {
+      "type": "io.cozy.accounts",
+      "verbs": ["GET"]
+    }
+  },
+  "developer": {
+    "name": "Cozy Cloud",
+    "url": "https://cozy.io"
+  },
+  "langs": ["fr", "en"],
+  "locales": {
+    "fr": {
+      "short_description": "Connecteur Netflix",
+      "long_description": "Ce connecteur récupère vos factures et historique d'activité de votre compte Netflix. À chaque nouvelle connexion de ce service à Netflix, un email \"un nouvel accès à votre compte\" vous sera envoyé. Ce comportement est parfaitement normal.",
+      "permissions": {
+        "bank operations": {
+          "description": "Utilisé pour relier les factures à des operations bancaires"
+        },
+        "bills": {
+          "description": "Utilisé pour sauver les données des factures"
+        },
+        "views": {
+          "description": "Utilisé pour sauvegarder ce que vous avez regardé"
+        },
+        "evaluations": {
+          "description": "Utilisé pour sauvegarder les notes que vous avez laissé"
+        },
+        "files": {
+          "description": "Utilisé pour sauvegarder les factures"
+        },
+        "accounts": {
+          "description": "Utilisé pour obtenir les données du compte"
+        }
+      }
+    },
+    "en": {
+      "short_description": "Netflix Connector",
+      "long_description": "This connector fetches your netflix invoices and views. Everytime your Cozy access your Netflix account, you will be sent an email saying \"a new access to your account\". This behaviour is completely normal.",
+      "permissions": {
+        "bank operations": {
+          "description": "Required to link bank operations to bills"
+        },
+        "bills": {
+          "description": "Required to save the bills data"
+        },
+        "views": {
+          "description": "Used to save what you watched."
+        },
+        "evaluations": {
+          "description": "Used to save the evaluations you made"
+        },
+        "files": {
+          "description": "Required to save the bills"
+        },
+        "accounts": {
+          "description": "Required to get the account's data"
+        }
+      }
+    }
+  },
+  "banksTransactionRegExp": "\\bnetflix\\b",
+  "manifest_version": "2"
+}
