@@ -8,7 +8,8 @@ const {
   saveBills,
   updateOrCreate,
   scrape,
-  signin
+  signin,
+  errors
 } = require('cozy-konnector-libs')
 const log = require('cozy-logger')
 const pdf = require('pdfjs')
@@ -50,6 +51,13 @@ async function authenticate(fields) {
     validate: (status, $) => {
       log.info('validating, status=' + status)
       log.info('validating, items=' + $('.list-profiles').length)
+
+      if ($.html().includes('<b>Incorrect password.</b>')) {
+        return false
+      } else if ($.html().includes('We are having technical difficulties')) {
+        throw new Error(errors.VENDOR_DOWN)
+      }
+
       return status == 200 && $('.list-profiles').length == 1
     },
     headers: {
@@ -60,7 +68,11 @@ async function authenticate(fields) {
 }
 
 async function getLoginURLAndCookies() {
-  const request = requestFactory({ debug: DEBUG, cheerio: true, jar: true })
+  const request = requestFactory({
+    debug: DEBUG,
+    cheerio: true,
+    jar: true
+  })
   // follow some redirects to get correct cookie & login urls
   const resp = await request({
     url: `${baseUrl}/login`,
@@ -84,12 +96,20 @@ async function selectProfile($, fields) {
     if (correctLink.length > 0) profileSelectHref = correctLink.attr('href')
   }
   if (!profileSelectHref) throw new Error('VENDOR_DOWN')
-  const request = requestFactory({ debug: DEBUG, cheerio: true, jar: true })
+  const request = requestFactory({
+    debug: DEBUG,
+    cheerio: true,
+    jar: true
+  })
   await request(baseUrl + profileSelectHref) // click link to set cookie
 }
 
 async function fetchBills(fields) {
-  const request = requestFactory({ debug: DEBUG, cheerio: true, jar: true })
+  const request = requestFactory({
+    debug: DEBUG,
+    cheerio: true,
+    jar: true
+  })
   const $bills = await request(baseUrl + '/BillingActivity')
   moment.locale($bills('.accountLayout').attr('lang') || 'fr')
   const bills = scrape(
@@ -135,7 +155,11 @@ async function billURLToStream(url) {
     link: url,
     color: '0x0000FF'
   })
-  const request = requestFactory({ debug: DEBUG, cheerio: true, jar: true })
+  const request = requestFactory({
+    debug: DEBUG,
+    cheerio: true,
+    jar: true
+  })
   const $ = await request(url)
   html2pdf($, doc, $('.invoiceContainer'), { baseURL: url })
   doc.end()
