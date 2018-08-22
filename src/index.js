@@ -47,7 +47,7 @@ async function authenticate(fields) {
     url: loginURL,
     debug: DEBUG,
     formSelector: 'form.login-form',
-    formData: { userLoginId: fields.login, password: fields.password },
+    formData: { email: fields.login, userLoginId: fields.login, password: fields.password },
     validate: (status, $) => {
       log.info('validating, status=' + status)
       log.info('validating, items=' + $('.list-profiles').length)
