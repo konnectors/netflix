@@ -6,7 +6,7 @@ const {
   BaseKonnector,
   requestFactory,
   saveBills,
-  updateOrCreate,
+  // updateOrCreate,
   scrape,
   signin,
   errors
@@ -32,9 +32,9 @@ async function start(fields) {
   const buildNumber = await getBuildNumber($)
 
   await Promise.all([
-    fetchBills(fields, buildNumber),
-    fetchViews(fields, buildNumber),
-    fetchOpinions(fields, buildNumber)
+    fetchBills(fields, buildNumber)
+    // fetchViews(fields, buildNumber),
+    // fetchOpinions(fields, buildNumber)
   ])
 }
 
@@ -170,51 +170,51 @@ async function billURLToStream(url) {
   return doc
 }
 
-const viewsDoctype = 'io.cozy.netflix.views'
-const viewsUniqFields = ['date', 'movieID']
-async function fetchViews(fields, buildNumber) {
-  const request = requestFactory({ debug: DEBUG, jar: true })
-  let page = 0
-  let done = false
+// const viewsDoctype = 'io.cozy.netflix.views'
+// const viewsUniqFields = ['date', 'movieID']
+// async function fetchViews(fields, buildNumber) {
+//   const request = requestFactory({ debug: DEBUG, jar: true })
+//   let page = 0
+//   let done = false
 
-  log('info', `start importing views`)
-  do {
-    const { viewedItems } = await request({
-      url:
-        baseUrl +
-        `/api/shakti/${buildNumber}/viewingactivity` +
-        `?pg=${page++}&pgSize=100`,
-      json: true
-    })
-    log('info', `importing ${viewedItems.length} views`)
-    await updateOrCreate(viewedItems, viewsDoctype, viewsUniqFields)
-    done = viewedItems.length == 0
-  } while (!done)
-  log('info', 'done importing views')
-}
+//   log('info', `start importing views`)
+//   do {
+//     const { viewedItems } = await request({
+//       url:
+//         baseUrl +
+//         `/api/shakti/${buildNumber}/viewingactivity` +
+//         `?pg=${page++}&pgSize=100`,
+//       json: true
+//     })
+//     log('info', `importing ${viewedItems.length} views`)
+//     await updateOrCreate(viewedItems, viewsDoctype, viewsUniqFields)
+//     done = viewedItems.length == 0
+//   } while (!done)
+//   log('info', 'done importing views')
+// }
 
-const evaluationsDoctype = 'io.cozy.netflix.opinions'
-const evaluationsUniqFields = ['date', 'movieID']
-async function fetchOpinions(fields, buildNumber) {
-  const request = requestFactory({ debug: DEBUG, jar: true })
-  let page = 0
-  let done = false
+// const evaluationsDoctype = 'io.cozy.netflix.opinions'
+// const evaluationsUniqFields = ['date', 'movieID']
+// async function fetchOpinions(fields, buildNumber) {
+//   const request = requestFactory({ debug: DEBUG, jar: true })
+//   let page = 0
+//   let done = false
 
-  log('info', `start importing opinions`)
-  do {
-    const { ratingItems } = await request({
-      url:
-        baseUrl +
-        `/api/shakti/${buildNumber}/ratinghistory` +
-        `?pg=${page++}&pgSize=100`,
-      json: true
-    })
-    log('info', `importing ${ratingItems.length} opinions`)
-    await updateOrCreate(ratingItems, evaluationsDoctype, evaluationsUniqFields)
-    done = ratingItems.length == 0
-  } while (!done)
-  log('info', 'done importing opinions')
-}
+//   log('info', `start importing opinions`)
+//   do {
+//     const { ratingItems } = await request({
+//       url:
+//         baseUrl +
+//         `/api/shakti/${buildNumber}/ratinghistory` +
+//         `?pg=${page++}&pgSize=100`,
+//       json: true
+//     })
+//     log('info', `importing ${ratingItems.length} opinions`)
+//     await updateOrCreate(ratingItems, evaluationsDoctype, evaluationsUniqFields)
+//     done = ratingItems.length == 0
+//   } while (!done)
+//   log('info', 'done importing opinions')
+// }
 
 // buildNumber is necessary for api requests
 async function getBuildNumber($) {
