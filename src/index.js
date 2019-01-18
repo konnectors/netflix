@@ -21,10 +21,23 @@ const baseUrl = 'https://www.netflix.com'
 const NBSPACE = '\xa0'
 const DEBUG = false
 
+const { CookieJar } = require('tough-cookie')
+
 module.exports = new BaseKonnector(start)
 
+// appSecret is one of the key which is automatically encrypted by the stack
+const JAR_ACCOUNT_KEY = 'appSecret'
+
+const j = requestFactory().jar()
+const request = requestFactory({
+  debug: DEBUG,
+  cheerio: true,
+  jar: j
+})
+
 async function start(fields) {
-  const $ = await authenticate(fields)
+  initSession.bind(this)()
+  const $ = (await testSession()) || (await authenticate(fields))
 
   await selectProfile($, fields)
 
@@ -36,14 +49,42 @@ async function start(fields) {
     // fetchViews(fields, buildNumber),
     // fetchOpinions(fields, buildNumber)
   ])
+
+  return saveSession.bind(this)()
+}
+
+function initSession() {
+  const jar = this.getAccountData()[JAR_ACCOUNT_KEY]
+  if (jar) {
+    log('info', 'found saved session, using it...')
+    j._jar = CookieJar.fromJSON(jar, j._jar.store)
+    return true
+  }
+  return false
+}
+
+async function testSession() {
+  log('info', 'testing the session...')
+  const $ = await request(`${baseUrl}/ProfilesGate`)
+  const profileSelectHref = $('.profile-link').attr('href')
+
+  if (profileSelectHref) {
+    log('info', 'session is still valid')
+    return $
+  } else {
+    log('warn', 'session test failed')
+    return false
+  }
 }
 
 async function authenticate(fields) {
   log.info('authenticating...')
+
   // follow some redirects to get correct cookie & login urls
   const loginURL = await getLoginURLAndCookies()
 
-  return signin({
+  const $ = await signin({
+    jar: j,
     url: loginURL,
     debug: DEBUG,
     formSelector: 'form.login-form',
@@ -69,14 +110,11 @@ async function authenticate(fields) {
     },
     followRedirect: true
   })
+
+  return $
 }
 
 async function getLoginURLAndCookies() {
-  const request = requestFactory({
-    debug: DEBUG,
-    cheerio: true,
-    jar: true
-  })
   // follow some redirects to get correct cookie & login urls
   const resp = await request({
     url: `${baseUrl}/login`,
@@ -99,21 +137,12 @@ async function selectProfile($, fields) {
     const correctLink = $('.profile-link').filter(isRequestedProfileName)
     if (correctLink.length > 0) profileSelectHref = correctLink.attr('href')
   }
+
   if (!profileSelectHref) throw new Error('VENDOR_DOWN')
-  const request = requestFactory({
-    debug: DEBUG,
-    cheerio: true,
-    jar: true
-  })
   await request(baseUrl + profileSelectHref) // click link to set cookie
 }
 
 async function fetchBills(fields) {
-  const request = requestFactory({
-    debug: DEBUG,
-    cheerio: true,
-    jar: true
-  })
   const $bills = await request(baseUrl + '/BillingActivity')
   moment.locale($bills('.accountLayout').attr('lang') || 'fr')
   const bills = scrape(
@@ -148,6 +177,12 @@ async function fetchBills(fields) {
   })
 }
 
+async function saveSession() {
+  const accountData = { ...this._account.data }
+  accountData[JAR_ACCOUNT_KEY] = j._jar.toJSON()
+  await this.saveAccountData(accountData)
+}
+
 async function billURLToStream(url) {
   var doc = new pdf.Document()
   const cell = doc.cell({ paddingBottom: 0.5 * pdf.cm }).text()
@@ -159,11 +194,6 @@ async function billURLToStream(url) {
     link: url,
     color: '0x0000FF'
   })
-  const request = requestFactory({
-    debug: DEBUG,
-    cheerio: true,
-    jar: true
-  })
   const $ = await request(url)
   html2pdf($, doc, $('.invoiceContainer'), { baseURL: url })
   doc.end()
@@ -173,7 +203,7 @@ async function billURLToStream(url) {
 // const viewsDoctype = 'io.cozy.netflix.views'
 // const viewsUniqFields = ['date', 'movieID']
 // async function fetchViews(fields, buildNumber) {
-//   const request = requestFactory({ debug: DEBUG, jar: true })
+//   const request = requestFactory({ debug: DEBUG, jar: j })
 //   let page = 0
 //   let done = false
 
@@ -196,7 +226,7 @@ async function billURLToStream(url) {
 // const evaluationsDoctype = 'io.cozy.netflix.opinions'
 // const evaluationsUniqFields = ['date', 'movieID']
 // async function fetchOpinions(fields, buildNumber) {
-//   const request = requestFactory({ debug: DEBUG, jar: true })
+//   const request = requestFactory({ debug: DEBUG, jar: j })
 //   let page = 0
 //   let done = false
 
