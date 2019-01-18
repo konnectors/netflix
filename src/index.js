@@ -26,7 +26,7 @@ const { CookieJar } = require('tough-cookie')
 module.exports = new BaseKonnector(start)
 
 // appSecret is one of the key which is automatically encrypted by the stack
-const JAR_ACCOUNT_KEY = 'appSecret'
+const JAR_ACCOUNT_KEY = 'session'
 
 const j = requestFactory().jar()
 const request = requestFactory({
