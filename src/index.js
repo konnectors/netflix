@@ -54,12 +54,21 @@ async function start(fields) {
 }
 
 function initSession() {
-  const jar = this.getAccountData()[JAR_ACCOUNT_KEY]
-  if (jar) {
-    log('info', 'found saved session, using it...')
-    j._jar = CookieJar.fromJSON(jar, j._jar.store)
-    return true
+  try {
+    const accountData = this.getAccountData()
+    let jar = null
+    if (accountData && accountData.auth) {
+      jar = JSON.parse(accountData.auth[JAR_ACCOUNT_KEY])
+    }
+    if (jar) {
+      log('info', 'found saved session, using it...')
+      j._jar = CookieJar.fromJSON(jar, j._jar.store)
+      return true
+    }
+  } catch (err) {
+    log('info', 'Could not parse session')
   }
+  log('info', 'Found no session')
   return false
 }
 
@@ -178,8 +187,8 @@ async function fetchBills(fields) {
 }
 
 async function saveSession() {
-  const accountData = { ...this._account.data }
-  accountData[JAR_ACCOUNT_KEY] = j._jar.toJSON()
+  const accountData = { ...this._account.data, auth: {} }
+  accountData.auth[JAR_ACCOUNT_KEY] = JSON.stringify(j._jar.toJSON())
   await this.saveAccountData(accountData)
 }
 
