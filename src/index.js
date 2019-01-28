@@ -173,11 +173,14 @@ async function fetchBills(fields) {
     bill.amount = parseFloat(amount.replace(',', '.'))
     bill.vendor = 'Netflix'
     bill.currency = currency
-    bill.filename = bill.date.format('YYYY-MM-DD') + '_' + amount + '.pdf'
+    bill.filename = mybill =>
+      moment(mybill.date).format('YYYY-MM-DD') + '_' + mybill.amount + '.pdf'
     bill.date = bill.date.toDate()
-    const url = new URL(bill.fileurl, baseUrl)
-    delete bill.fileurl
-    bill.filestream = await billURLToStream(url.toString())
+    bill.filestream = bill => {
+      const fileurl = bill.fileurl
+      delete bill.fileurl
+      return billURLToStream(new URL(fileurl, baseUrl).toString())
+    }
   }
   await saveBills(bills, fields, {
     identifiers: ['netflix'],
