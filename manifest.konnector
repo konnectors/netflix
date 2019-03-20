@@ -5,7 +5,7 @@
   "language": "node",
   "icon": "icon.svg",
   "slug": "netflix",
-  "source": "git://github.com/konnectors/netflix.git",
+  "source": "git@github.com:konnectors/netflix.git",
   "editor": "Cozy",
   "vendor_link": "https://www.netflix.com/login",
   "categories": [
