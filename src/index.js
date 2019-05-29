@@ -2,15 +2,7 @@ process.env.SENTRY_DSN =
   process.env.SENTRY_DSN ||
   'https://397c3282a3bd46b39eaf5e91770fe362:6f81483e6c1e4760a3a69a937fecf147@sentry.cozycloud.cc/44'
 
-const {
-  BaseKonnector,
-  requestFactory,
-  saveBills,
-  // updateOrCreate,
-  scrape,
-  signin,
-  errors
-} = require('cozy-konnector-libs')
+const { CookieKonnector, scrape, errors } = require('cozy-konnector-libs')
 const log = require('cozy-logger')
 const pdf = require('pdfjs')
 const { URL } = require('url')
@@ -21,195 +13,164 @@ const baseUrl = 'https://www.netflix.com'
 const NBSPACE = '\xa0'
 const DEBUG = false
 
-const { CookieJar } = require('tough-cookie')
+class NetflixConnector extends CookieKonnector {
+  async fetch(fields) {
+    const $ = (await this.testSession()) || (await this.authenticate(fields))
 
-module.exports = new BaseKonnector(start)
+    await this.selectProfile($, fields)
 
-const JAR_ACCOUNT_KEY = 'session'
+    // we need the build number to make API calls
+    const buildNumber = await getBuildNumber($)
 
-const j = requestFactory().jar()
-const request = requestFactory({
+    await Promise.all([
+      this.fetchBills(fields, buildNumber)
+      // fetchViews(fields, buildNumber),
+      // fetchOpinions(fields, buildNumber)
+    ])
+  }
+
+  async testSession() {
+    log('info', 'testing the session...')
+    const $ = await this.request(`${baseUrl}/ProfilesGate`)
+    const profileSelectHref = $('.profile-link').attr('href')
+
+    if (profileSelectHref) {
+      log('info', 'session is still valid')
+      return $
+    } else {
+      log('info', 'session test failed')
+      return false
+    }
+  }
+
+  async authenticate(fields) {
+    log.info('authenticating...')
+
+    // follow some redirects to get correct cookie & login urls
+    const loginURL = await this.getLoginURLAndCookies()
+
+    const $ = await this.signin({
+      url: loginURL,
+      debug: DEBUG,
+      formSelector: 'form.login-form',
+      formData: {
+        email: fields.login,
+        userLoginId: fields.login,
+        password: fields.password
+      },
+      validate: (status, $) => {
+        log.info('validating, status=' + status)
+        log.info('validating, items=' + $('.list-profiles').length)
+
+        if ($.html().includes('<b>Incorrect password.</b>')) {
+          return false
+        } else if ($.html().includes('We are having technical difficulties')) {
+          throw new Error(errors.VENDOR_DOWN)
+        }
+
+        return status == 200 && $('.list-profiles').length == 1
+      },
+      headers: {
+        'Accept-Language': 'en-US'
+      },
+      followRedirect: true
+    })
+
+    return $
+  }
+
+  async getLoginURLAndCookies() {
+    // follow some redirects to get correct cookie & login urls
+    const resp = await this.request({
+      url: `${baseUrl}/login`,
+      debug: DEBUG,
+      resolveWithFullResponse: true
+    })
+
+    return resp.request.uri.href
+  }
+
+  async selectProfile($, fields) {
+    // get login link for first profile
+    let profileSelectHref = $('.profile-link').attr('href')
+    if (fields.profileName) {
+      const isRequestedProfileName = e =>
+        $(e)
+          .find('.profile-name')
+          .text() === fields.profileName
+
+      const correctLink = $('.profile-link').filter(isRequestedProfileName)
+      if (correctLink.length > 0) profileSelectHref = correctLink.attr('href')
+    }
+
+    if (!profileSelectHref) throw new Error('VENDOR_DOWN')
+    await this.request(baseUrl + profileSelectHref) // click link to set cookie
+  }
+
+  async fetchBills(fields) {
+    const $bills = await this.request(baseUrl + '/BillingActivity')
+    moment.locale($bills('.accountLayout').attr('lang') || 'fr')
+    const bills = scrape(
+      $bills,
+      {
+        fileurl: {
+          sel: '.billDate a',
+          attr: 'href'
+        },
+        date: {
+          sel: '.billDate',
+          parse: text => moment(text, 'L')
+        },
+        amount: '.billTotal'
+      },
+      '.billingSectionSpace .retableRow'
+    )
+    for (let bill of bills) {
+      const [amount, currency] = bill.amount.split(NBSPACE)
+      bill.amount = parseFloat(amount.replace(',', '.'))
+      bill.vendor = 'Netflix'
+      bill.currency = currency
+      bill.filename = mybill =>
+        moment(mybill.date).format('YYYY-MM-DD') + '_' + mybill.amount + '.pdf'
+      bill.date = bill.date.toDate()
+      bill.filestream = await this.billURLToStream(
+        new URL(bill.fileurl, baseUrl).toString()
+      )
+      delete bill.fileurl
+    }
+    await this.saveBills(bills, fields, {
+      identifiers: ['netflix'],
+      contentType: 'application/pdf'
+    })
+  }
+
+  async billURLToStream(url) {
+    var doc = new pdf.Document()
+    const cell = doc.cell({ paddingBottom: 0.5 * pdf.cm }).text()
+    cell.add(
+      'Généré automatiquement par le connecteur Netflix depuis la page ',
+      {
+        font: require('pdfjs/font/Helvetica-Bold'),
+        fontSize: 14
+      }
+    )
+    cell.add(url, {
+      link: url,
+      color: '0x0000FF'
+    })
+    const $ = await this.request(url)
+    html2pdf($, doc, $('.invoiceContainer'), { baseURL: url })
+    doc.end()
+    return doc
+  }
+}
+
+const connector = new NetflixConnector({
   debug: DEBUG,
   cheerio: true,
-  jar: j
+  json: false
 })
-
-async function start(fields) {
-  initSession.bind(this)()
-  const $ = (await testSession()) || (await authenticate(fields))
-
-  await selectProfile($, fields)
-
-  // we need the build number to make API calls
-  const buildNumber = await getBuildNumber($)
-
-  await Promise.all([
-    fetchBills(fields, buildNumber)
-    // fetchViews(fields, buildNumber),
-    // fetchOpinions(fields, buildNumber)
-  ])
-
-  return saveSession.bind(this)()
-}
-
-function initSession() {
-  try {
-    const accountData = this.getAccountData()
-    let jar = null
-    if (accountData && accountData.auth) {
-      jar = JSON.parse(accountData.auth[JAR_ACCOUNT_KEY])
-    }
-    if (jar) {
-      log('info', 'found saved session, using it...')
-      j._jar = CookieJar.fromJSON(jar, j._jar.store)
-      return true
-    }
-  } catch (err) {
-    log('info', 'Could not parse session')
-  }
-  log('info', 'Found no session')
-  return false
-}
-
-async function testSession() {
-  log('info', 'testing the session...')
-  const $ = await request(`${baseUrl}/ProfilesGate`)
-  const profileSelectHref = $('.profile-link').attr('href')
-
-  if (profileSelectHref) {
-    log('info', 'session is still valid')
-    return $
-  } else {
-    log('info', 'session test failed')
-    return false
-  }
-}
-
-async function authenticate(fields) {
-  log.info('authenticating...')
-
-  // follow some redirects to get correct cookie & login urls
-  const loginURL = await getLoginURLAndCookies()
-
-  const $ = await signin({
-    jar: j,
-    url: loginURL,
-    debug: DEBUG,
-    formSelector: 'form.login-form',
-    formData: {
-      email: fields.login,
-      userLoginId: fields.login,
-      password: fields.password
-    },
-    validate: (status, $) => {
-      log.info('validating, status=' + status)
-      log.info('validating, items=' + $('.list-profiles').length)
-
-      if ($.html().includes('<b>Incorrect password.</b>')) {
-        return false
-      } else if ($.html().includes('We are having technical difficulties')) {
-        throw new Error(errors.VENDOR_DOWN)
-      }
-
-      return status == 200 && $('.list-profiles').length == 1
-    },
-    headers: {
-      'Accept-Language': 'en-US'
-    },
-    followRedirect: true
-  })
-
-  return $
-}
-
-async function getLoginURLAndCookies() {
-  // follow some redirects to get correct cookie & login urls
-  const resp = await request({
-    url: `${baseUrl}/login`,
-    debug: DEBUG,
-    resolveWithFullResponse: true
-  })
-
-  return resp.request.uri.href
-}
-
-async function selectProfile($, fields) {
-  // get login link for first profile
-  let profileSelectHref = $('.profile-link').attr('href')
-  if (fields.profileName) {
-    const isRequestedProfileName = e =>
-      $(e)
-        .find('.profile-name')
-        .text() === fields.profileName
-
-    const correctLink = $('.profile-link').filter(isRequestedProfileName)
-    if (correctLink.length > 0) profileSelectHref = correctLink.attr('href')
-  }
-
-  if (!profileSelectHref) throw new Error('VENDOR_DOWN')
-  await request(baseUrl + profileSelectHref) // click link to set cookie
-}
-
-async function fetchBills(fields) {
-  const $bills = await request(baseUrl + '/BillingActivity')
-  moment.locale($bills('.accountLayout').attr('lang') || 'fr')
-  const bills = scrape(
-    $bills,
-    {
-      fileurl: {
-        sel: '.billDate a',
-        attr: 'href'
-      },
-      date: {
-        sel: '.billDate',
-        parse: text => moment(text, 'L')
-      },
-      amount: '.billTotal'
-    },
-    '.billingSectionSpace .retableRow'
-  )
-  for (let bill of bills) {
-    const [amount, currency] = bill.amount.split(NBSPACE)
-    bill.amount = parseFloat(amount.replace(',', '.'))
-    bill.vendor = 'Netflix'
-    bill.currency = currency
-    bill.filename = mybill =>
-      moment(mybill.date).format('YYYY-MM-DD') + '_' + mybill.amount + '.pdf'
-    bill.date = bill.date.toDate()
-    bill.filestream = bill => {
-      const fileurl = bill.fileurl
-      delete bill.fileurl
-      return billURLToStream(new URL(fileurl, baseUrl).toString())
-    }
-  }
-  await saveBills(bills, fields, {
-    identifiers: ['netflix'],
-    contentType: 'application/pdf'
-  })
-}
-
-async function saveSession() {
-  const accountData = { ...this._account.data, auth: {} }
-  accountData.auth[JAR_ACCOUNT_KEY] = JSON.stringify(j._jar.toJSON())
-  await this.saveAccountData(accountData)
-}
-
-async function billURLToStream(url) {
-  var doc = new pdf.Document()
-  const cell = doc.cell({ paddingBottom: 0.5 * pdf.cm }).text()
-  cell.add('Généré automatiquement par le connecteur Netflix depuis la page ', {
-    font: require('pdfjs/font/Helvetica-Bold'),
-    fontSize: 14
-  })
-  cell.add(url, {
-    link: url,
-    color: '0x0000FF'
-  })
-  const $ = await request(url)
-  html2pdf($, doc, $('.invoiceContainer'), { baseURL: url })
-  doc.end()
-  return doc
-}
+connector.run()
 
 // const viewsDoctype = 'io.cozy.netflix.views'
 // const viewsUniqFields = ['date', 'movieID']
