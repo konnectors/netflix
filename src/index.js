@@ -131,7 +131,7 @@ class NetflixConnector extends CookieKonnector {
       bill.vendor = 'Netflix'
       bill.currency = currency
       bill.filename = mybill =>
-        moment(mybill.date).format('YYYY-MM-DD') + '_' + mybill.amount + '.pdf'
+        moment(mybill.date).format('YYYY-MM-DD') + '_' + amount + '.pdf'
       bill.date = bill.date.toDate()
       bill.filestream = await this.billURLToStream(
         new URL(bill.fileurl, baseUrl).toString()
