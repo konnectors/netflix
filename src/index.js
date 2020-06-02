@@ -121,7 +121,12 @@ class NetflixConnector extends CookieKonnector {
           sel: '.billDate',
           parse: text => moment(text, 'L')
         },
-        amount: '.billTotal'
+        amount: '.billTotal',
+        vendorRef: {
+          sel: '.billDate a',
+          attr: 'href',
+          parse: a => a.split('/').pop()
+        }
       },
       '.billingSectionSpace .retableRow'
     )
@@ -140,7 +145,8 @@ class NetflixConnector extends CookieKonnector {
     }
     await this.saveBills(bills, fields, {
       identifiers: ['netflix'],
-      contentType: 'application/pdf'
+      contentType: true,
+      fileIdAttributes: ['vendorRef']
     })
   }
 
