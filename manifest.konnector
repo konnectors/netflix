@@ -118,6 +118,11 @@
       }
     }
   },
+  "features": [
+    "LOGIN_OK",
+    "METADATA_DEDUP",
+    "HTML_TO_PDF"
+  ],
   "banksTransactionRegExp": "\\bnetflix\\b",
   "manifest_version": "2"
 }
