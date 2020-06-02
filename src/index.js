@@ -11,7 +11,7 @@ const moment = require('moment')
 
 const baseUrl = 'https://www.netflix.com'
 const NBSPACE = '\xa0'
-const DEBUG = false
+const DEBUG = true
 
 class NetflixConnector extends CookieKonnector {
   async fetch(fields) {
@@ -31,6 +31,9 @@ class NetflixConnector extends CookieKonnector {
 
   async testSession() {
     log('info', 'testing the session...')
+    if (!this._jar._jar.toJSON().cookies.length) {
+      return false
+    }
     const $ = await this.request(`${baseUrl}/ProfilesGate`)
     const profileSelectHref = $('.profile-link').attr('href')
 
@@ -39,6 +42,7 @@ class NetflixConnector extends CookieKonnector {
       return $
     } else {
       log('info', 'session test failed')
+      await this.resetSession()
       return false
     }
   }
