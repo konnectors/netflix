@@ -11,7 +11,7 @@ const moment = require('moment')
 
 const baseUrl = 'https://www.netflix.com'
 const NBSPACE = '\xa0'
-const DEBUG = true
+const DEBUG = false
 
 class NetflixConnector extends CookieKonnector {
   async fetch(fields) {
