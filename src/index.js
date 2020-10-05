@@ -2,7 +2,12 @@ process.env.SENTRY_DSN =
   process.env.SENTRY_DSN ||
   'https://397c3282a3bd46b39eaf5e91770fe362:6f81483e6c1e4760a3a69a937fecf147@sentry.cozycloud.cc/44'
 
-const { CookieKonnector, scrape, errors } = require('cozy-konnector-libs')
+const {
+  CookieKonnector,
+  scrape,
+  errors,
+  solveCaptcha
+} = require('cozy-konnector-libs')
 const log = require('cozy-logger')
 const pdf = require('pdfjs')
 const { URL } = require('url')
@@ -51,7 +56,15 @@ class NetflixConnector extends CookieKonnector {
     log.info('authenticating...')
 
     // follow some redirects to get correct cookie & login urls
-    const loginURL = await this.getLoginURLAndCookies()
+    const { url: loginURL, websiteKey } = await this.getLoginURLAndCookies()
+
+    let recaptchaResponseToken
+    if (websiteKey) {
+      recaptchaResponseToken = await solveCaptcha({
+        websiteURL: loginURL,
+        websiteKey
+      })
+    }
 
     const $ = await this.signin({
       url: loginURL,
@@ -60,7 +73,8 @@ class NetflixConnector extends CookieKonnector {
       formData: {
         email: fields.login,
         userLoginId: fields.login,
-        password: fields.password
+        password: fields.password,
+        recaptchaResponseToken
       },
       validate: (status, $) => {
         log.info('validating, status=' + status)
@@ -91,7 +105,12 @@ class NetflixConnector extends CookieKonnector {
       resolveWithFullResponse: true
     })
 
-    return resp.request.uri.href
+    const websiteKey = resp.body
+      .html()
+      .split('recaptchaSitekey')[1]
+      .match(/"value":"(.*)"},"countryIsoCode"/)[1]
+
+    return { url: resp.request.uri.href, websiteKey }
   }
 
   async selectProfile($, fields) {

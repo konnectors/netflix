@@ -119,6 +119,7 @@
     }
   },
   "features": [
+    "CAPTCHA_RESOLUTION",
     "LOGIN_OK",
     "METADATA_DEDUP",
     "HTML_TO_PDF"
