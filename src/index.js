@@ -53,8 +53,6 @@ class NetflixConnector extends CookieKonnector {
   }
 
   async authenticate(fields) {
-    log.info('authenticating...')
-
     // follow some redirects to get correct cookie & login urls
     const { url: loginURL, websiteKey } = await this.getLoginURLAndCookies()
 
@@ -71,9 +69,9 @@ class NetflixConnector extends CookieKonnector {
       debug: DEBUG,
       formSelector: 'form.login-form',
       formData: {
-        email: fields.login,
         userLoginId: fields.login,
         password: fields.password,
+        rememberMe: 'true',
         recaptchaResponseToken
       },
       validate: (status, $) => {
