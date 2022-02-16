@@ -116,9 +116,7 @@ class NetflixConnector extends CookieKonnector {
     let profileSelectHref = $('.profile-link').attr('href')
     if (fields.profileName) {
       const isRequestedProfileName = e =>
-        $(e)
-          .find('.profile-name')
-          .text() === fields.profileName
+        $(e).find('.profile-name').text() === fields.profileName
 
       const correctLink = $('.profile-link').filter(isRequestedProfileName)
       if (correctLink.length > 0) profileSelectHref = correctLink.attr('href')

@@ -2330,10 +2330,10 @@ cozy-flags@2.7.1:
   dependencies:
     microee "^0.0.6"
 
-cozy-jobs-cli@1.17.1:
-  version "1.17.1"
-  resolved "https://registry.yarnpkg.com/cozy-jobs-cli/-/cozy-jobs-cli-1.17.1.tgz#a035ce2bdfd5665ca80743443a1d6db68a82094e"
-  integrity sha512-byv4TxRztE9OMwFBoMrw6YqiW/w0lUJTn87050ySBvcoOZKGKE3hH0JiCHwzoxlZ82RmhqIIzmEWTv4HYXEF+Q==
+cozy-jobs-cli@1.17.3:
+  version "1.17.3"
+  resolved "https://registry.yarnpkg.com/cozy-jobs-cli/-/cozy-jobs-cli-1.17.3.tgz#e7ec1f535c5df6085ecd3e2cb2314c9d6446a3be"
+  integrity sha512-XHR4SwmHOfyRLinNoiWqNWbNjmUk8NFQNPzm9MTQXGraUvoIJnEm33XtTFcIOYpewxf3uYvzowXF53/IPMKDtQ==
   dependencies:
     "@pollyjs/adapter-node-http" "5.1.1"
     "@pollyjs/core" "5.1.1"
@@ -2345,7 +2345,7 @@ cozy-jobs-cli@1.17.1:
     cli-highlight "2.1.11"
     commander "7.2.0"
     cozy-client "27.15.0"
-    cozy-konnector-libs "^4.50.0"
+    cozy-konnector-libs "^4.50.2"
     cozy-logger "1.8.0"
     open "8.4.0"
     pretty "2.0.0"
@@ -2367,10 +2367,10 @@ cozy-konnector-build@1.3.1:
     webpack "5.68.0"
     webpack-cli "4.9.1"
 
-cozy-konnector-libs@4.50.0, cozy-konnector-libs@^4.50.0:
-  version "4.50.0"
-  resolved "https://registry.yarnpkg.com/cozy-konnector-libs/-/cozy-konnector-libs-4.50.0.tgz#3cefdae490bf4a2061b6f496fc45b5dc73900a77"
-  integrity sha512-Sram9CE6Df0sdBKvvfQXFEqMe1+uzA+6w0Tf2t1+9gS7owB01r+cxnKK9W68mqg12HuJMPCqiVzbvYQbGHE6xA==
+cozy-konnector-libs@4.50.2, cozy-konnector-libs@^4.50.2:
+  version "4.50.2"
+  resolved "https://registry.yarnpkg.com/cozy-konnector-libs/-/cozy-konnector-libs-4.50.2.tgz#2b407302b40eaa3b57dc3cfb19dd876b1d6fc052"
+  integrity sha512-93SGgBRW02ZN0W4KCc9peyEhGXly4nGF8mCuZWG3d1Zzug/gUgphxKtd/GvwkE/qDElGa93/SxcGupQBZmsK9w==
   dependencies:
     babel-runtime "^6.26.0"
     bluebird "^3.7.2"
@@ -3335,7 +3335,6 @@ functional-red-black-tree@^1.0.1:
 
 "geco@git+https://github.com/konnectors/geco.git#0.11.2":
   version "0.11.2"
-  uid fe0da3cdaabd5714a226014efd61c89bc85e7c56
   resolved "git+https://github.com/konnectors/geco.git#fe0da3cdaabd5714a226014efd61c89bc85e7c56"
   dependencies:
     toni "git+https://github.com/konnectors/toni.git#0.6.3"
@@ -4594,10 +4593,10 @@ pako@^0.2.5:
   resolved "https://registry.yarnpkg.com/pako/-/pako-0.2.9.tgz#f3f7522f4ef782348da8161bad9ecfd51bf83a75"
   integrity sha1-8/dSL073gjSNqBYbrZ7P1Rv4OnU=
 
-pako@^1.0.11:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/pako/-/pako-1.0.11.tgz#6c9599d340d54dfd3946380252a35705a6b992bf"
-  integrity sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==
+pako@^2.0.3:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/pako/-/pako-2.0.4.tgz#6cebc4bbb0b6c73b0d5b8d7e8476e2b2fbea576d"
+  integrity sha512-v8tweI900AUkZN6heMU/4Uy4cXRc2AYNRggVmTR+dEncawDJgCdLMximOVA2p4qO57WMynangsfGRb5WD6L1Bg==
 
 parent-module@^1.0.0:
   version "1.0.1"
@@ -4673,17 +4672,17 @@ path-type@^4.0.0:
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
 
-pdfjs@2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/pdfjs/-/pdfjs-2.4.1.tgz#8e353fb4bbe536e133fb8ba019921e4b0787afdb"
-  integrity sha512-nsIaWECzhRfFwQkaKws4onoOq69Hkik9tk0UCv60rEEV/VGNXdlB7Fzp9kqyJJIAToO3ebekDfXbK0c4AVezuQ==
+pdfjs@2.4.7:
+  version "2.4.7"
+  resolved "https://registry.yarnpkg.com/pdfjs/-/pdfjs-2.4.7.tgz#966084e63a0283206c1307c3b332f53248917f20"
+  integrity sha512-qGGZiQ7cz7nDgRgNSMm0qsZ4QPlAvZr+kWwB78hZzClojtfqGbGUT/gwzf8S2nniwvLMB56boBTTIppQohTJUA==
   dependencies:
     "@rkusa/linebreak" "^1.0.0"
     opentype.js "^1.3.3"
-    pako "^1.0.11"
+    pako "^2.0.3"
     readable-stream "^3.6.0"
     unorm "^1.6.0"
-    uuid "^8.3.0"
+    uuid "^8.3.1"
 
 peek-readable@^4.0.0:
   version "4.0.0"
@@ -5762,7 +5761,6 @@ token-types@^2.0.0:
 
 "toni@git+https://github.com/konnectors/toni.git#0.6.3":
   version "0.6.3"
-  uid eb813c9d070b494efd78f788cf627bfc9a1019ec
   resolved "git+https://github.com/konnectors/toni.git#eb813c9d070b494efd78f788cf627bfc9a1019ec"
   dependencies:
     bolgia ">=2.7.4"
@@ -5962,7 +5960,7 @@ uuid@^3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
-uuid@^8.3.0:
+uuid@^8.3.1:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
   integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
